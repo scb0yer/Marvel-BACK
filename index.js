@@ -11,9 +11,9 @@ const comicsRoutes = require("./routes/comic");
 app.use(characterRoutes);
 app.use(comicsRoutes);
 
-app.get("*", (res) => {
-  res.json("Page not found");
-});
+// app.get("*", (res) => {
+//   res.json("Page not found");
+// });
 
 app.listen(process.env.PORT || 4000, () => {
   console.log("Server started");

@@ -2,20 +2,33 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-router.get("/comics", async (req, res) => {
+router.get("/comics/:skip", async (req, res) => {
   try {
-    const query = [];
-    if (req.body.title) {
-      query.push(`title=${req.body.title}`);
-    }
-    if (req.body.skip) {
-      query.push(`skip=${req.body.skip}`);
-    }
-    const queries = query.join("&");
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.API_KEY}&${queries}`
+          `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.API_KEY}&skip=${req.params.skip}`
+        );
+        console.log(response.data);
+        res.json(response.data);
+      } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+      }
+    };
+    fetchData();
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get("/characters/:skip/:title", async (req, res) => {
+  try {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.API_KEY}&skip=${req.params.skip}&title=${req.params.title}`
         );
         console.log(response.data);
         res.json(response.data);
