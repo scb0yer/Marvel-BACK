@@ -109,41 +109,19 @@ router.post(
   }
 );
 
-router.post(
-  "/user/removeFavouriteComics/:comicId",
+router.delete(
+  "/user/removeFavourite/:Id",
   isAuthenticated,
   async (req, res) => {
     try {
-      const userFound = req.userFound;
-      const comicToDelete = req.params.comicId;
-      const user = await User.findOne({ email: userFound.email });
-      const comics = [...user.favourites.comics];
-      const characters = [...user.favourites.characters];
-      let count = 0;
-      const response = {};
-      for (let i = 0; i < comics.length; i++) {
-        if (comics[i] === comicToDelete) {
-          count++;
-          comics[i] = "zzzzzzzzzzzzzzzzzzzz";
-          comics.sort();
-          comics.pop();
-          response.message =
-            "La bande dessinée a bien été supprimée des favoris";
-          break;
-        }
+      if (!req.params.Id) {
+        throw { status: 400, message: "Missing id" };
       }
-      if (count === 0) {
-        response.message =
-          "Aucune bande dessinée ne correspond à cet id dans les favoris";
+      const result = await User.findByIdAndDelete(req.params.Id);
+      if (!result) {
+        throw { status: 404, message: "Student not found" };
       }
-      const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
-        favourites: {
-          comics: comics,
-          characters: characters,
-        },
-      });
-      await FavouritesToUpdate.save();
-      res.status(200).json(response.message);
+      res.status(200).json({ message: "Élément enlevé des favoris" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -198,45 +176,45 @@ router.post(
   }
 );
 
-router.post(
-  "/user/removeFavouriteCharacter/:characterId",
-  isAuthenticated,
-  async (req, res) => {
-    try {
-      const userFound = req.userFound;
-      const characterToDelete = req.params.characterId;
-      const user = await User.findOne({ email: userFound.email });
-      const comics = [...user.favourites.comics];
-      const characters = [...user.favourites.characters];
-      let count = 0;
-      const response = {};
-      for (let i = 0; i < characters.length; i++) {
-        if (characters[i] === characterToDelete) {
-          count++;
-          characters[i] = "zzzzzzzzzzzzzzzzzzzz";
-          characters.sort();
-          characters.pop();
-          response.message = "Le personnage a bien été supprimé des favoris";
-          break;
-        }
-      }
-      if (count === 0) {
-        response.message =
-          "Aucun personnage ne correspond à cet id dans les favoris";
-      }
-      const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
-        favourites: {
-          comics: comics,
-          characters: characters,
-        },
-      });
-      await FavouritesToUpdate.save();
-      res.status(200).json(response.message);
-    } catch (error) {
-      return res.status(500).json({ error: error.message });
-    }
-  }
-);
+// router.post(
+//   "/user/removeFavouriteCharacter/:characterId",
+//   isAuthenticated,
+//   async (req, res) => {
+//     try {
+//       const userFound = req.userFound;
+//       const characterToDelete = req.params.characterId;
+//       const user = await User.findOne({ email: userFound.email });
+//       const comics = [...user.favourites.comics];
+//       const characters = [...user.favourites.characters];
+//       let count = 0;
+//       const response = {};
+//       for (let i = 0; i < characters.length; i++) {
+//         if (characters[i].id === characterToDelete) {
+//           count++;
+//           characters[i] = "zzzzzzzzzzzzzzzzzzzz";
+//           characters.sort();
+//           characters.pop();
+//           response.message = "Le personnage a bien été supprimé des favoris";
+//           break;
+//         }
+//       }
+//       if (count === 0) {
+//         response.message =
+//           "Aucun personnage ne correspond à cet id dans les favoris";
+//       }
+//       const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
+//         favourites: {
+//           comics: comics,
+//           characters: characters,
+//         },
+//       });
+//       await FavouritesToUpdate.save();
+//       res.status(200).json(response.message);
+//     } catch (error) {
+//       return res.status(500).json({ error: error.message });
+//     }
+//   }
+// );
 
 router.get("/userData/", isAuthenticated, async (req, res) => {
   try {
