@@ -25,8 +25,8 @@ router.post("/user/signup", async (req, res) => {
         username,
       },
       favourites: {
-        comics: [String],
-        characters: [String],
+        comics: [],
+        characters: [],
       },
       newsletter,
       token: token,
@@ -181,5 +181,25 @@ router.post(
     }
   }
 );
+
+router.get("/userData/", isAuthenticated, async (req, res) => {
+  try {
+    const userFound = req.userFound;
+    const user = await User.findOne({ email: userFound.email });
+    console.log(user);
+
+    const response = {
+      username: user.account.username,
+      email: user.email,
+      favourites: {
+        comics: user.favourites.comics,
+        characters: user.favourites.characters,
+      },
+    };
+    res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
