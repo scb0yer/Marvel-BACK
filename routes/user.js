@@ -75,14 +75,16 @@ router.post(
     try {
       const userFound = req.userFound;
       const user = await User.findOne({ email: userFound.email });
-      for (let i = 0; i < user.favourites.comics.length; i++) {
-        if (user.favourites.comics[i].id === req.params.comicId) {
-          return res.status(400).json({
-            message: "Cette bande dessinée est déjà dans les favoris !",
-          });
+      if (user.favourites.comics.length > 0) {
+        for (let i = 0; i < user.favourites.comics.length; i++) {
+          if (user.favourites.comics[i].id === req.params.comicId) {
+            console.log("comic already in favourites");
+            return res.status(400).json({
+              message: "Cette bande dessinée est déjà dans les favoris !",
+            });
+          }
         }
       }
-      console.log(user);
       const title = req.body.title;
       const picture = req.body.picture;
       const comics = [...user.favourites.comics];
@@ -154,16 +156,20 @@ router.post(
   async (req, res) => {
     try {
       console.log(req.params.characterId);
+      console.log(req.body);
       const userFound = req.userFound;
-      for (let i = 0; i < user.favourites.characters.length; i++) {
-        if (user.favourites.characters[i].id === req.params.characterId) {
-          return res.status(400).json({
-            message: "Ce personnage est déjà dans les favoris !",
-          });
+
+      const user = await User.findOne({ email: userFound.email });
+      if (user.favourites.characters.length > 0) {
+        for (let i = 0; i < user.favourites.characters.length; i++) {
+          if (user.favourites.characters[i].id === req.params.characterId) {
+            console.log("character already in favourites");
+            return res.status(400).json({
+              message: "Ce personnage est déjà dans les favoris !",
+            });
+          }
         }
       }
-      const user = await User.findOne({ email: userFound.email });
-      console.log(user);
       const name = req.body.name;
       const picture = req.body.picture;
       const comics = [...user.favourites.comics];
@@ -173,6 +179,7 @@ router.post(
         name: name,
         picture: picture,
       });
+      console.log(characters);
       const FavouritesToUpdate = await User.findByIdAndUpdate(
         userFound._id,
         {
