@@ -80,12 +80,16 @@ router.post(
       const characters = [...user.favourites.characters];
       comics.push(req.params.comicId);
 
-      const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
-        favourites: {
-          comics: comics,
-          characters: characters,
+      const FavouritesToUpdate = await User.findByIdAndUpdate(
+        userFound._id,
+        {
+          favourites: {
+            comics: comics,
+            characters: characters,
+          },
         },
-      });
+        { new: true }
+      );
       await FavouritesToUpdate.save();
       res.status(200).json(FavouritesToUpdate.favourites.comics);
     } catch (error) {
@@ -147,12 +151,16 @@ router.post(
       const comics = [...user.favourites.comics];
       const characters = [...user.favourites.characters];
       characters.push(req.params.characterId);
-      const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
-        favourites: {
-          comics: comics,
-          characters: characters,
+      const FavouritesToUpdate = await User.findByIdAndUpdate(
+        userFound._id,
+        {
+          favourites: {
+            comics: comics,
+            characters: characters,
+          },
         },
-      });
+        { new: true }
+      );
       await FavouritesToUpdate.save();
       res.status(200).json(FavouritesToUpdate.favourites.characters);
     } catch (error) {
