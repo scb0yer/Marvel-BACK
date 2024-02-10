@@ -10,7 +10,7 @@ const User = mongoose.model("User", {
   },
   favourites: {
     comics: [{ id: String, title: String, picture: String }],
-    characters: [{ id: String, title: String, picture: String }],
+    characters: [{ id: String, name: String, picture: String }],
   },
   newsletter: Boolean,
   token: String,
