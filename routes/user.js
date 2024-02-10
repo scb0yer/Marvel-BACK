@@ -107,7 +107,7 @@ router.post(
       let count = 0;
       const response = {};
       for (let i = 0; i < comics.length; i++) {
-        if ((comics[i] = comicToDelete)) {
+        if (comics[i] === comicToDelete) {
           count++;
           comics[i] = "zzzzzzzzzzzzzzzzzzzz";
           comics.sort();
@@ -117,7 +117,7 @@ router.post(
           break;
         }
       }
-      if ((count = 0)) {
+      if (count === 0) {
         response.message =
           "Aucune bande dessinée ne correspond à cet id dans les favoris";
       }
@@ -167,14 +167,14 @@ router.post(
   async (req, res) => {
     try {
       const userFound = req.userFound;
-      const characterToDelete = req.params.comicId;
+      const characterToDelete = req.params.characterId;
       const user = await User.findOne({ email: userFound.email });
       const comics = [...user.favourites.comics];
       const characters = [...user.favourites.characters];
       let count = 0;
       const response = {};
       for (let i = 0; i < characters.length; i++) {
-        if ((characters[i] = characterToDelete)) {
+        if (characters[i] === characterToDelete) {
           count++;
           characters[i] = "zzzzzzzzzzzzzzzzzzzz";
           characters.sort();
@@ -183,7 +183,7 @@ router.post(
           break;
         }
       }
-      if ((count = 0)) {
+      if (count === 0) {
         response.message =
           "Aucun personnage ne correspond à cet id dans les favoris";
       }
