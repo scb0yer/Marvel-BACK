@@ -76,18 +76,18 @@ router.post(
       const userFound = req.userFound;
       const user = await User.findOne({ email: userFound.email });
       console.log(user);
-      const comics = user.favourites.comics;
-      const characters = user.favourites.characters;
-      const newComics = comics.push(req.params.comicId);
+      const comics = [...user.favourites.comics];
+      const characters = [...user.favourites.characters];
+      comics.push(req.params.comicId);
 
       const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
         favourites: {
-          comics: newComics,
+          comics: comics,
           characters: characters,
         },
       });
       await FavouritesToUpdate.save();
-      res.status(200).json(user.favourites.comics);
+      res.status(200).json(FavouritesToUpdate.favourites.comics);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -102,13 +102,24 @@ router.post(
       const userFound = req.userFound;
       const comicToDelete = req.params.comicId;
       const user = await User.findOne({ email: userFound.email });
-      const comics = user.favourites.comics;
-      const characters = user.favourites.characters;
+      const comics = [...user.favourites.comics];
+      const characters = [...user.favourites.characters];
+      let count = 0;
+      const response = {};
       for (let i = 0; i < comics.length; i++) {
         if ((comics[i] = comicToDelete)) {
+          count++;
           comics[i] = "zzzzzzzzzzzzzzzzzzzz";
+          comics.sort();
+          comics.pop();
+          response.message =
+            "La bande dessinée a bien été supprimée des favoris";
+          break;
         }
-        comics.pop();
+      }
+      if ((count = 0)) {
+        response.message =
+          "Aucune bande dessinée ne correspond à cet id dans les favoris";
       }
       const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
         favourites: {
@@ -117,9 +128,7 @@ router.post(
         },
       });
       await FavouritesToUpdate.save();
-      res
-        .status(200)
-        .json(`La bande dessinée a bien été supprimée des favoris`);
+      res.status(200).json(response.message);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -131,21 +140,21 @@ router.post(
   isAuthenticated,
   async (req, res) => {
     try {
+      console.log(req.params.characterId);
       const userFound = req.userFound;
       const user = await User.findOne({ email: userFound.email });
       console.log(user);
-      const comics = user.favourites.comics;
-      const characters = user.favourites.characters;
-      const newCharacters = characters.push(req.params.characterId);
-
+      const comics = [...user.favourites.comics];
+      const characters = [...user.favourites.characters];
+      characters.push(req.params.characterId);
       const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
         favourites: {
           comics: comics,
-          characters: newCharacters,
+          characters: characters,
         },
       });
       await FavouritesToUpdate.save();
-      res.status(200).json(user.favourites.characters);
+      res.status(200).json(FavouritesToUpdate.favourites.characters);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -160,13 +169,23 @@ router.post(
       const userFound = req.userFound;
       const characterToDelete = req.params.comicId;
       const user = await User.findOne({ email: userFound.email });
-      const comics = user.favourites.comics;
-      const characters = user.favourites.characters;
+      const comics = [...user.favourites.comics];
+      const characters = [...user.favourites.characters];
+      let count = 0;
+      const response = {};
       for (let i = 0; i < characters.length; i++) {
         if ((characters[i] = characterToDelete)) {
+          count++;
           characters[i] = "zzzzzzzzzzzzzzzzzzzz";
+          characters.sort();
+          characters.pop();
+          response.message = "Le personnage a bien été supprimé des favoris";
+          break;
         }
-        characters.pop();
+      }
+      if ((count = 0)) {
+        response.message =
+          "Aucun personnage ne correspond à cet id dans les favoris";
       }
       const FavouritesToUpdate = await User.findByIdAndUpdate(userFound._id, {
         favourites: {
@@ -175,7 +194,7 @@ router.post(
         },
       });
       await FavouritesToUpdate.save();
-      res.status(200).json(`Le personnage a bien été supprimé des favoris`);
+      res.status(200).json(response.message);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
