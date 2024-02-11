@@ -23,7 +23,7 @@ router.get("/comics/:skip", async (req, res) => {
   }
 });
 
-router.get("/characters/:skip/:title", async (req, res) => {
+router.get("/comics/:skip/:title", async (req, res) => {
   try {
     const fetchData = async () => {
       try {
